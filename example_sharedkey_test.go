@@ -37,7 +37,7 @@ func Example() {
 	// Generate 8 bytes of random salt. Be sure to use crypto/rand for all
 	// of your random number needs
 	salt := make([]byte, 8)
-	rand.Read(salt)
+	_, _ = rand.Read(salt)
 
 	username := "fred@fred.example"
 
@@ -168,7 +168,7 @@ func Example() {
 	// We will use GCM with a 12 byte nonce for this example
 	// NEVER use the same nonce twice with the same key. Never.
 	nonce := make([]byte, 12)
-	rand.Read(nonce)
+	_, _ = rand.Read(nonce)
 
 	plaintext := []byte("Hi client! Will you be my Valentine?")
 	ciphertext := serverCryptor.Seal(nil, nonce, plaintext, nil)
@@ -194,7 +194,7 @@ func Example() {
 	// It MUST NOT reuse the nonce that was used in the message
 	// it received when encrypting a different message.
 
-	rand.Read(nonce) // get a fresh nonce
+	_, _ = rand.Read(nonce) // get a fresh nonce
 	reply := []byte("Send me chocolate, not bits!")
 
 	replyCipherText := clientCryptor.Seal(nil, nonce, reply, nil)

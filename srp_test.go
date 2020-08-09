@@ -21,7 +21,7 @@ var expectedVerifier = hexNumberString(
 		"EA53D15C 1AFF87B2 B9DA6E04 E058AD51 CC72BFC9 033B564E 26480D78" +
 		"E955A5E2 9E7AB245 DB2BE315 E2099AFB")
 
-var a = hexNumberString("60975527 035CF2AD 1989806F 0407210B C81EDC04 E2762A56 AFD529DD DA2D4393")
+// var _a = hexNumberString("60975527 035CF2AD 1989806F 0407210B C81EDC04 E2762A56 AFD529DD DA2D4393")
 
 var g1024 = &Group{g: big.NewInt(2), n: NumberFromString("0x EEAF0AB9ADB38DD69C33F80AFA8FC5E86072618775FF3C0B9EA2314C" +
 	"9C256576D674DF7496EA81D3383B4813D692C6E0E0D5D8E250B98BE4" +
@@ -33,12 +33,12 @@ func init() {
 	KnownGroups[RFC5054Group1024] = g1024
 }
 
-var expectedA = hexNumberString(
-	"61D5E490 F6F1B795 47B0704C 436F523D D0E560F0 C64115BB 72557EC4" +
-		"4352E890 3211C046 92272D8B 2D1A5358 A2CF1B6E 0BFCF99F 921530EC" +
-		"8E393561 79EAE45E 42BA92AE ACED8251 71E1E8B9 AF6D9C03 E1327F44" +
-		"BE087EF0 6530E69F 66615261 EEF54073 CA11CF58 58F0EDFD FE15EFEA" +
-		"B349EF5D 76988A36 72FAC47B 0769447B")
+// var expectedA = hexNumberString(
+// 	"61D5E490 F6F1B795 47B0704C 436F523D D0E560F0 C64115BB 72557EC4" +
+// 		"4352E890 3211C046 92272D8B 2D1A5358 A2CF1B6E 0BFCF99F 921530EC" +
+// 		"8E393561 79EAE45E 42BA92AE ACED8251 71E1E8B9 AF6D9C03 E1327F44" +
+// 		"BE087EF0 6530E69F 66615261 EEF54073 CA11CF58 58F0EDFD FE15EFEA" +
+// 		"B349EF5D 76988A36 72FAC47B 0769447B")
 
 func hexNumberString(s string) *big.Int {
 	result, err := hex.DecodeString(strings.Replace(s, " ", "", -1))
@@ -68,8 +68,8 @@ func TestCalculateClientRawKey(t *testing.T) {
 	groupID := RFC5054Group4096
 	client := NewSRPClient(KnownGroups[groupID], x, k)
 	client.ephemeralPrivate = a
-	client.makeA()
-	client.SetOthersPublic(B)
+	_, _ = client.makeA()
+	_ = client.SetOthersPublic(B)
 	client.u = u
 	key, _ := client.Key()
 
@@ -192,7 +192,7 @@ func TestNewSRPAgainstSpec(t *testing.T) {
 		t.Error("B is incorrect")
 	}
 
-	server.SetOthersPublic(A)
+	_ = server.SetOthersPublic(A)
 	if ret, err = server.calculateU(); err != nil {
 		t.Errorf("calculateu failed: %s", err)
 	}
@@ -255,7 +255,7 @@ func TestClientServerMatch(t *testing.T) {
 	groupID := RFC5054Group2048
 
 	xbytes := make([]byte, 32)
-	rand.Read(xbytes)
+	_, _ = rand.Read(xbytes)
 	x := &big.Int{}
 	x.SetBytes(xbytes)
 
@@ -269,8 +269,8 @@ func TestClientServerMatch(t *testing.T) {
 
 	A := client.EphemeralPublic()
 	B := server.EphemeralPublic()
-	server.SetOthersPublic(A)
-	client.SetOthersPublic(B)
+	_ = server.SetOthersPublic(A)
+	_ = client.SetOthersPublic(B)
 
 	serverKey, _ := server.Key()
 	clientKey, _ := client.Key()
@@ -288,7 +288,7 @@ func TestClientServerMatch(t *testing.T) {
 
 func TestBadA(t *testing.T) {
 	xbytes := make([]byte, 32)
-	rand.Read(xbytes)
+	_, _ = rand.Read(xbytes)
 	v := &big.Int{}
 	v.SetBytes(xbytes)
 
@@ -346,7 +346,7 @@ func TestCalculateU(t *testing.T) {
 
 	// I probably should have saved the shell scripting that was involved in creating these tests
 	expected := map[string]map[string]string{
-		"0123456789ab": map[string]string{
+		"0123456789ab": {
 			"0123456789ab":     "3473b093f4dbc722b2888a959bbea9900930a37b551a87f0dacb5b8e7cc25716",
 			"123456789abd":     "90e6c973cdc0fd7e1e46c175a96b097aa028c609735c7b8e22cc2ad73d4f3562",
 			"00123456789abd":   "90e6c973cdc0fd7e1e46c175a96b097aa028c609735c7b8e22cc2ad73d4f3562",
@@ -354,7 +354,7 @@ func TestCalculateU(t *testing.T) {
 			"ffff12341234":     "a4e46ec489660092000f88f2f313630c198583f4609b1d731b4c12f8a13d1aae",
 			"123456789abcdef0": "d469afdb6b53eae515a3b90bd068f4b51a7c07ed3338a5b0f115568f189c92fa",
 		},
-		"123456789abd": map[string]string{
+		"123456789abd": {
 			"0123456789ab":     "8316d6bb7c4948281828fc87b0a60b27131147acc9dd3884579dd373bc5fa66c",
 			"123456789abd":     "84a9d2f215c13ed60a5163fc1ae80720c5ee38994cb3c9e2c61f1d9c6769fee0",
 			"00123456789abd":   "84a9d2f215c13ed60a5163fc1ae80720c5ee38994cb3c9e2c61f1d9c6769fee0",
@@ -362,7 +362,7 @@ func TestCalculateU(t *testing.T) {
 			"ffff12341234":     "dcd2d4db6b6b9374ece8218aa329f0d6af1916e3e7cd648ac69696f7b0fc35c8",
 			"123456789abcdef0": "f3b18867043bff3f8f70ded696a8f30641a6e978b64afac268fe5e0c218541b5",
 		},
-		"00123456789abd": map[string]string{
+		"00123456789abd": {
 			"0123456789ab":     "8316d6bb7c4948281828fc87b0a60b27131147acc9dd3884579dd373bc5fa66c",
 			"123456789abd":     "84a9d2f215c13ed60a5163fc1ae80720c5ee38994cb3c9e2c61f1d9c6769fee0",
 			"00123456789abd":   "84a9d2f215c13ed60a5163fc1ae80720c5ee38994cb3c9e2c61f1d9c6769fee0",
@@ -370,7 +370,7 @@ func TestCalculateU(t *testing.T) {
 			"ffff12341234":     "dcd2d4db6b6b9374ece8218aa329f0d6af1916e3e7cd648ac69696f7b0fc35c8",
 			"123456789abcdef0": "f3b18867043bff3f8f70ded696a8f30641a6e978b64afac268fe5e0c218541b5",
 		},
-		"0fff12341234": map[string]string{
+		"0fff12341234": {
 			"0123456789ab":     "a8b75aa42a37697190b7ee3d4a94767d824833b09a67f4a000baa91b4c299bbf",
 			"123456789abd":     "e3fe08e9dd54a7fc45cef7fce898cfe5d13761180d39ae2ce09d291de84e24f0",
 			"00123456789abd":   "e3fe08e9dd54a7fc45cef7fce898cfe5d13761180d39ae2ce09d291de84e24f0",
@@ -378,7 +378,7 @@ func TestCalculateU(t *testing.T) {
 			"ffff12341234":     "f4f5f8c6136abb8f330c584cc4118ff4ab267a778f647488132e8247918cea5a",
 			"123456789abcdef0": "35d468540b4ec5b6d87c892c64c53f12133d95e3f7725738fe6aec849084ad94",
 		},
-		"ffff12341234": map[string]string{
+		"ffff12341234": {
 			"0123456789ab":     "c64ccc47ad0384b7319e77454c8222360517a187c4a65e14681e896fe33df91c",
 			"123456789abd":     "206b4ac4d451dbba7de2f31f321c4cdf08562ba42ef39d447ac74ffa62b4991e",
 			"00123456789abd":   "206b4ac4d451dbba7de2f31f321c4cdf08562ba42ef39d447ac74ffa62b4991e",
@@ -386,7 +386,7 @@ func TestCalculateU(t *testing.T) {
 			"ffff12341234":     "a4f7aea26de01ca96c679539ae8a5f85c84885c8df7d22323dcc5225ab5bd782",
 			"123456789abcdef0": "20e882a091216d709c6e3e59dcac4068912c82b401412b6c89105e16cd10960a",
 		},
-		"123456789abcdef0": map[string]string{
+		"123456789abcdef0": {
 			"0123456789ab":     "d1ffad6424b8e424ab930f37c42523371e639ccd40d25c49683590878345c4c2",
 			"123456789abd":     "2765d1ed7b227492795f830e9606875dfc2bb79cb7d047de0d8f57c577bb840e",
 			"00123456789abd":   "2765d1ed7b227492795f830e9606875dfc2bb79cb7d047de0d8f57c577bb840e",

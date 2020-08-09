@@ -33,14 +33,14 @@ func KDFRFC5054(salt []byte, username string, password string) (x *big.Int) {
 	u := []byte(PreparePassword(username))
 
 	innerHasher := sha1.New() // #nosec
-	innerHasher.Write(u)
-	innerHasher.Write([]byte(":"))
-	innerHasher.Write(p)
+	_, _ = innerHasher.Write(u)
+	_, _ = innerHasher.Write([]byte(":"))
+	_, _ = innerHasher.Write(p)
 	ih := innerHasher.Sum(nil)
 
 	oHasher := sha1.New() // #nosec
-	oHasher.Write(salt)
-	oHasher.Write(ih)
+	_, _ = oHasher.Write(salt)
+	_, _ = oHasher.Write(ih)
 
 	h := oHasher.Sum(nil)
 	x = bigIntFromBytes(h)

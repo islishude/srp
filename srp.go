@@ -134,13 +134,13 @@ func newSRP(serverSide bool, group *Group, xORv *big.Int, k *big.Int) *SRP {
 		// should probably do some sanity checks on k here
 		s.k.Set(k)
 	} else {
-		s.makeLittleK()
+		_, _ = s.makeLittleK()
 	}
 	s.generateMySecret()
 	if s.isServer {
-		s.makeB()
+		_, _ = s.makeB()
 	} else {
-		s.makeA()
+		_, _ = s.makeA()
 	}
 	return s
 }
@@ -153,12 +153,12 @@ func newSRP(serverSide bool, group *Group, xORv *big.Int, k *big.Int) *SRP {
 func (s *SRP) EphemeralPublic() *big.Int {
 	if s.isServer {
 		if s.ephemeralPublicB.Cmp(bigZero) == 0 {
-			s.makeB()
+			_, _ = s.makeB()
 		}
 		return s.ephemeralPublicB
 	}
 	if s.ephemeralPublicA.Cmp(bigZero) == 0 {
-		s.makeA()
+		_, _ = s.makeA()
 	}
 	return s.ephemeralPublicA
 }
